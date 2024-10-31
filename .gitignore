@@ -5,7 +5,7 @@
 dist/
 *build/
 *__pycache__*/
-crossword_project\__pycache__\
+crossword_project/__pycache__/
 *.egg-info/
 MANIFEST
 *.pyc
