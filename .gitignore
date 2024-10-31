@@ -1,10 +1,10 @@
 .idea/
 .vscode/
 .pytest_cache/
-venv/
+*venv/
 dist/
-build/
-__pycache__/
+*build/
+*__pycache__/
 *.egg-info/
 MANIFEST
 *.pyc
