@@ -3,6 +3,7 @@ import json
 import os
 from .models import Question, Answer
 import random
+import time
 
 def is_correct_answer(id_answer, answer_text):
     
@@ -10,10 +11,14 @@ def is_correct_answer(id_answer, answer_text):
     return is_correct
     
 
-def generate_crossword_data():
-    random_number = int(random.random() * 1000) 
+def generate_crossword_data(count_words):
     words = Answer.get_all_answers()
-    dimensions, placed_words = generate_crossword(words.copy(), seed=random_number)
+    placed_words = []
+    if count_words is None:
+        dimensions, placed_words = gen_random_crossword(words)
+    else:
+        while len(placed_words) != int(count_words):
+            dimensions, placed_words = gen_random_crossword(words)
 
     json_dict = { 
         'dimensions': {'cols':  dimensions[0], 'rows': dimensions[1]},
@@ -51,3 +56,9 @@ def generate_crossword_data():
 
     # with open('data.json', 'w') as json_file:
     #     json.dump([json_dict], json_file)
+
+def gen_random_crossword(words):
+    random_number = int(random.random() * 1000) 
+    dimensions, placed_words = generate_crossword(words.copy(), seed=random_number)
+
+    return dimensions, placed_words

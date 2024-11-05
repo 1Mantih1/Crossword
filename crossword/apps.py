@@ -7,5 +7,3 @@ class CrosswordConfig(AppConfig):
 
     def ready(self):
         from .utils import generate_crossword_data
-
-        generate_crossword_data()

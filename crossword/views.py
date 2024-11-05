@@ -4,7 +4,8 @@ from .utils import generate_crossword_data, is_correct_answer
 
 def get_data(request):
     if request.method == 'GET':
-        json_dict = generate_crossword_data()
+        count_words = request.GET.get('count')
+        json_dict = generate_crossword_data(count_words)
         return JsonResponse([json_dict], safe=False)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
