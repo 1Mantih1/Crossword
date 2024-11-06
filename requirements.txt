@@ -1,0 +1,4 @@
+django
+pycrossword-generator
+django-cors-headers
+psycopg2
