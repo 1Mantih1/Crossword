@@ -26,6 +26,7 @@ def generate_crossword_data(count_words):
         'words': []
     }
 
+    counter = 1
     for word in placed_words:
         question = Question.get_question_by_answer(word[0])
         id_words = Answer.get_id_by_answer(word[0])
@@ -42,7 +43,7 @@ def generate_crossword_data(count_words):
             end_y = start_y + word_len - 1
 
         word_info = {
-            'id': id_words,
+            'id': counter,
             'word': word[0],
             'orientation': orientation,
             'start_col': start_x,
@@ -51,7 +52,8 @@ def generate_crossword_data(count_words):
             'end_row': end_y,
             'question': question
         }
-
+        
+        counter += 1
         json_dict['words'].append(word_info)
     return json_dict
 
