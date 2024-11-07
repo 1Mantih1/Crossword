@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from .utils import generate_crossword_data, is_correct_answer
 
 def get_data(request):
-    if request.method == 'GET':
+    if request.method == 'GET': #hey
         count_words = request.GET.get('count')
         json_dict = generate_crossword_data(count_words)
         return JsonResponse([json_dict], safe=False)
