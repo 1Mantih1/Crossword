@@ -18,7 +18,6 @@ def generate_crossword_data(count_words):
         count_words = int(count_words)
         x = 13 if count_words == 10 else 10
         while len(placed_words) != count_words:
-            print(len(placed_words))
             dimensions, placed_words = gen_random_crossword(words, x)
 
     json_dict = { 
@@ -29,10 +28,9 @@ def generate_crossword_data(count_words):
     counter = 1
     for word in placed_words:
         question = Question.get_question_by_answer(word[0])
-        id_words = Answer.get_id_by_answer(word[0])
         start_x = word[2]
         start_y = word[1]
-        orientation = 'horizontal' if word[3] else 'vertically'
+        orientation = 'Горизонтально' if word[3] else 'Вертикально'
         word_len = len(word[0])
 
         if orientation:
