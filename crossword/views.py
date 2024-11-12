@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .utils import generate_crossword_data, is_correct_answer
+from .utils import generate_crossword_data, is_correct_answer, get_solution_data
 
-def get_data(request):
+def get_cross(request):
     if request.method == 'GET':
         count_words = request.GET.get('count')
         json_dict = generate_crossword_data(count_words)
@@ -18,3 +18,11 @@ def check_answer(request):
         return JsonResponse([json_correct], safe=False)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
+    
+def get_data(request):
+    if request.method == 'GET':
+        return JsonResponse(get_solution_data(), safe=False)
+    
+def add_solution(request):
+    if request.method == 'PUT':...
+

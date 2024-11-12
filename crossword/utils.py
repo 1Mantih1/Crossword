@@ -1,12 +1,11 @@
 from pycrossword import generate_crossword
-from .models import Question, Answer
+from .models import Question, Answer, Solution
 import random
 
+
 def is_correct_answer(id_answer, answer_text):
-    
     is_correct = Answer.check_answer(id_answer, answer_text)
     return is_correct
-    
 
 def generate_crossword_data(count_words):
     words = Answer.get_all_answers()
@@ -61,3 +60,8 @@ def gen_random_crossword(words, x):
     dimensions, placed_words = generate_crossword(words.copy(), seed=random_number, x=x, y=x)
 
     return dimensions, placed_words
+
+
+def get_solution_data():
+    data = Solution.get_all_solutions()
+    return data

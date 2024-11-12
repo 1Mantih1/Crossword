@@ -6,11 +6,9 @@ class Question(models.Model):
 
     @staticmethod
     def get_question_by_answer(answer_text):
-
         questions = Question.objects.filter(
             solution__id_answer__answer=answer_text
         ).values('question')
-
         if questions.exists():
             return questions.first()['question']
         return None
@@ -34,18 +32,14 @@ class Answer(models.Model):
         
     @staticmethod
     def get_id_by_answer(answer_text):
-
         answer_id = Answer.objects.filter(answer=answer_text).values('id_answer')
-
         if answer_id.exists():
             return answer_id.first()['id_answer']
         return None
     
     @staticmethod
     def check_answer(answer_id, checked_answer):
-
         answer = Answer.objects.filter(id_answer=answer_id).values('answer')
-
         return answer.first()['answer'].lower() == checked_answer.lower()  
 
     def __str__(self):
@@ -55,3 +49,14 @@ class Solution(models.Model):
     id_solution = models.AutoField(primary_key=True)
     id_question = models.ForeignKey(Question, on_delete=models.CASCADE)
     id_answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+
+    @staticmethod
+    def get_all_solutions():
+        solutions = Solution.objects.select_related('id_question', 'id_answer').values(
+            'id_solution',
+            'id_question',
+            'id_question__question',
+            'id_answer', 
+            'id_answer__answer' 
+        )
+        return list(solutions)
