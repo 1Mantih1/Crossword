@@ -9,6 +9,7 @@ class Question(models.Model):
         questions = Question.objects.filter(
             solution__id_answer__answer=answer_text
         ).values('question')
+
         if questions.exists():
             return questions.first()['question']
         return None
@@ -40,7 +41,7 @@ class Answer(models.Model):
     @staticmethod
     def check_answer(answer_id, checked_answer):
         answer = Answer.objects.filter(id_answer=answer_id).values('answer')
-        return answer.first()['answer'].lower() == checked_answer.lower()  
+        return answer.first()['answer'].lower() == checked_answer.lower()
 
     def __str__(self):
         return self.answer
@@ -56,7 +57,10 @@ class Solution(models.Model):
             'id_solution',
             'id_question',
             'id_question__question',
-            'id_answer', 
-            'id_answer__answer' 
+            'id_answer',
+            'id_answer__answer'
         )
         return list(solutions)
+
+    def __str__(self):
+        return f"Solution {self.id_solution}"

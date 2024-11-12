@@ -24,26 +24,86 @@ def get_data(request):
     return JsonResponse(get_solution_data(), safe=False)
 
 @csrf_exempt
-@require_http_methods(["PUT"])
 def add_solution(request):
-    try:
-        data = json.loads(request.body)
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            question_text = data.get('question')
+            answer_text = data.get('answer')
 
-        question_text = data.get("question")
-        answer_text = data.get("answer")
+            question, created = Question.objects.get_or_create(question=question_text)
+            answer, created = Answer.objects.get_or_create(answer=answer_text)
 
-        if not question_text or not answer_text:
-            return JsonResponse({"error": "Both question and answer are required."}, status=400)
+            solution = Solution(id_question=question, id_answer=answer)
+            solution.save()
 
-        question, created_question = Question.objects.get_or_create(question=question_text)
-        answer, created_answer = Answer.objects.get_or_create(answer=answer_text)
-        solution, created_solution = Solution.objects.get_or_create(id_question=question, id_answer=answer)
+            return JsonResponse({'message': 'Solution added successfully'}, status=201)
 
-        return JsonResponse({
-            "message": "Solution added successfully",
-            "solution_id": solution.id_solution,
-            "question_id": question.id_question,
-            "answer_id": answer.id_answer
-        }, status=201)
-    except Exception as e:
-        return JsonResponse({"error": f"An error occurred: {str(e)}"}, status=500)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+@csrf_exempt
+def update_solution(request):
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body)
+            id_solution = data.get('id_solution')
+            new_question_text = data.get('question')
+            new_answer_text = data.get('answer')
+
+            solution = Solution.objects.get(id_solution=id_solution)
+            question = solution.id_question
+            answer = solution.id_answer
+
+            if new_question_text and question.question != new_question_text:
+                question.question = new_question_text
+                question.save()
+
+            if new_answer_text and answer.answer != new_answer_text:
+                answer.answer = new_answer_text
+                answer.save()
+
+            solution.save()
+
+            return JsonResponse({'message': 'Solution updated successfully'}, status=200)
+
+        except Solution.DoesNotExist:
+            return JsonResponse({'error': 'Solution not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+def delete_solution(request):
+    if request.method == 'DELETE':
+        try:
+            data = json.loads(request.body)
+            id_solution = data.get('id_solution')
+
+            solution = Solution.objects.get(id_solution=id_solution)
+
+            question = solution.id_question
+            answer = solution.id_answer
+
+            question.delete()
+            answer.delete()
+
+            return JsonResponse({'message': 'Solution and related Question and Answer deleted successfully'}, status=200)
+
+        except Solution.DoesNotExist:
+            return JsonResponse({'error': 'Solution not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+def get_solution_data(request):
+    if request.method == 'GET':
+        solutions = Solution.get_all_solutions()
+        return JsonResponse(solutions, safe=False)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
