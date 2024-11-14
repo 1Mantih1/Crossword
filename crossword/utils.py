@@ -26,6 +26,7 @@ def generate_crossword_data(count_words):
     counter = 1
     for word in placed_words:
         question = Question.get_question_by_answer(word[0])
+        id = Answer.get_id_by_answer(word[0])
         start_x = word[2]
         start_y = word[1]
         orientation = 'Горизонтально' if word[3] else 'Вертикально'
@@ -40,7 +41,8 @@ def generate_crossword_data(count_words):
 
         word_info = {
             'id': counter,
-            'word': word[0],
+            'id_db': id,
+            'word_len': len(word[0]),
             'orientation': orientation,
             'start_col': start_x,
             'start_row': start_y,

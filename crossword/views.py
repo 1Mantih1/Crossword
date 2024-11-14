@@ -17,7 +17,7 @@ def check_answer(request):
     id_value = request.GET.get('id')
     answer_value = request.GET.get('answer')
     json_correct = is_correct_answer(id_value, answer_value)
-    return JsonResponse([json_correct], safe=False)
+    return JsonResponse(json_correct, safe=False)
 
 @require_http_methods(["GET"])
 def get_data(request):
