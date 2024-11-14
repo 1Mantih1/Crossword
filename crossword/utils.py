@@ -48,7 +48,8 @@ def generate_crossword_data(count_words):
             'start_row': start_y,
             'end_col': end_x,
             'end_row': end_y,
-            'question': question
+            'question': question,
+            'correct': False
         }
         
         counter += 1
