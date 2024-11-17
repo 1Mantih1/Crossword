@@ -81,8 +81,7 @@ def update_solution(request):
 def delete_solution(request):
     if request.method == 'DELETE':
         try:
-            data = json.loads(request.body)
-            id_solution = data.get('id_solution')
+            id_solution = request.GET.get('id_solution')
 
             solution = Solution.objects.get(id_solution=id_solution)
 

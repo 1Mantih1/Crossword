@@ -55,9 +55,7 @@ class Solution(models.Model):
     def get_all_solutions():
         solutions = Solution.objects.select_related('id_question', 'id_answer').values(
             'id_solution',
-            'id_question',
             'id_question__question',
-            'id_answer',
             'id_answer__answer'
         )
         return list(solutions)
