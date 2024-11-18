@@ -20,6 +20,12 @@ def check_answer(request):
     return JsonResponse(json_correct, safe=False)
 
 @require_http_methods(["GET"])
+def check_login(request):
+    password = request.GET.get('password')
+    flag = password == "Terminator090123"
+    return JsonResponse(flag, safe=False)
+
+@require_http_methods(["GET"])
 def get_data(request):
     return JsonResponse(get_solution_data(), safe=False)
 
@@ -98,11 +104,4 @@ def delete_solution(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
 
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-
-def get_solution_data(request):
-    if request.method == 'GET':
-        solutions = Solution.get_all_solutions()
-        return JsonResponse(solutions, safe=False)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
