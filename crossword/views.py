@@ -1,55 +1,56 @@
-from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from asgiref.sync import sync_to_async
 from .utils import generate_crossword_data, is_correct_answer, get_solution_data
 from .models import Question, Answer, Solution
 import json
 
-passwd =  "Terminator090123"
+passwd = "Terminator090123"
 
 @require_http_methods(["GET"])
-def get_cross(request):
+async def get_cross(request):
     count_words = request.GET.get('count')
-    json_dict = generate_crossword_data(count_words)
+    json_dict = await sync_to_async(generate_crossword_data)(count_words)
     return JsonResponse([json_dict], safe=False)
 
 @require_http_methods(["GET"])
-def check_answer(request):
+async def check_answer(request):
     id_value = request.GET.get('id')
     answer_value = request.GET.get('answer')
-    json_correct = is_correct_answer(id_value, answer_value)
+    json_correct = await sync_to_async(is_correct_answer)(id_value, answer_value)
     return JsonResponse(json_correct, safe=False)
 
 @require_http_methods(["GET"])
-def check_login(request):
+async def check_login(request):
     password = request.GET.get('password')
     flag = password == passwd
     return JsonResponse(flag, safe=False)
 
 @require_http_methods(["GET"])
-def get_data(request):
+async def get_data(request):
     password = request.GET.get('password')
 
     if password == 'null':
         return JsonResponse('', safe=False)
 
     if password == passwd:
-        return JsonResponse(get_solution_data(), safe=False)
+        data = await sync_to_async(get_solution_data)()
+        return JsonResponse(data, safe=False)
 
 @csrf_exempt
-def add_solution(request):
+async def add_solution(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
             question_text = data.get('question')
             answer_text = data.get('answer')
 
-            question, created = Question.objects.get_or_create(question=question_text)
-            answer, created = Answer.objects.get_or_create(answer=answer_text)
+            question, _ = await sync_to_async(Question.objects.get_or_create)(question=question_text)
+            answer, _ = await sync_to_async(Answer.objects.get_or_create)(answer=answer_text)
 
             solution = Solution(id_question=question, id_answer=answer)
-            solution.save()
+            await sync_to_async(solution.save)()
 
             return JsonResponse({'message': 'Solution added successfully'}, status=201)
 
@@ -57,7 +58,6 @@ def add_solution(request):
             return JsonResponse({'error': str(e)}, status=400)
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
-
 
 @csrf_exempt
 def update_solution(request):
