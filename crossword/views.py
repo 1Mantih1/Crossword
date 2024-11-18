@@ -6,6 +6,8 @@ from .utils import generate_crossword_data, is_correct_answer, get_solution_data
 from .models import Question, Answer, Solution
 import json
 
+passwd =  "Terminator090123"
+
 @require_http_methods(["GET"])
 def get_cross(request):
     count_words = request.GET.get('count')
@@ -22,12 +24,18 @@ def check_answer(request):
 @require_http_methods(["GET"])
 def check_login(request):
     password = request.GET.get('password')
-    flag = password == "Terminator090123"
+    flag = password == passwd
     return JsonResponse(flag, safe=False)
 
 @require_http_methods(["GET"])
 def get_data(request):
-    return JsonResponse(get_solution_data(), safe=False)
+    password = request.GET.get('password')
+
+    if password == 'null':
+        return JsonResponse('', safe=False)
+
+    if password == passwd:
+        return JsonResponse(get_solution_data(), safe=False)
 
 @csrf_exempt
 def add_solution(request):
